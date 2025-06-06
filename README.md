@@ -23,7 +23,7 @@ O projeto implementa um agente chamado **Agente do Tempo** que responde a pergun
 ## Requisitos
 
 - Node.js >= 20.9.0
-- pnpm 
+- pnpm >= 9.7.1
 - Banco de dados SQLite (ou LibSQL)
 
 ## Instalação
