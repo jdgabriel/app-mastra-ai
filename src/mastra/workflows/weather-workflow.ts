@@ -1,55 +1,53 @@
-import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { createStep, createWorkflow } from '@mastra/core/workflows';
 import { z } from 'zod';
-
-const llm = openai('gpt-4o-mini');
+import { MODELS } from '../providers/models';
 
 const agent = new Agent({
-  name: 'Weather Agent',
-  model: llm,
+  name: 'Agente do Tempo',
+  model: MODELS.google,
   instructions: `
-        You are a local activities and travel expert who excels at weather-based planning. Analyze the weather data and provide practical activity recommendations.
+        Você é um especialista local em atividades e viagens que se destaca em planejamento baseado no clima. Analise os dados meteorológicos e forneça recomendações práticas de atividades.
 
-        For each day in the forecast, structure your response exactly as follows:
+        Para cada dia da previsão, estruture sua resposta exatamente como segue:
 
-        📅 [Day, Month Date, Year]
+        📅 [Dia da semana, Dia Mês, Ano]\n
         ═══════════════════════════
 
-        🌡️ WEATHER SUMMARY
-        • Conditions: [brief description]
-        • Temperature: [X°C/Y°F to A°C/B°F]
-        • Precipitation: [X% chance]
+        🌡️ RESUMO DO CLIMA
+        • Condições: [breve descrição]
+        • Temperatura: [X°C/Y°F até A°C/B°F]
+        • Precipitação: [X% de chance]
 
-        🌅 MORNING ACTIVITIES
-        Outdoor:
-        • [Activity Name] - [Brief description including specific location/route]
-          Best timing: [specific time range]
-          Note: [relevant weather consideration]
+        🌅 ATIVIDADES PELA MANHÃ
+        Ao ar livre:
+        • [Nome da Atividade] - [Breve descrição incluindo local específico/rota]
+          Melhor horário: [faixa de horário específica]
+          Observação: [consideração relevante sobre o clima]
 
-        🌞 AFTERNOON ACTIVITIES
-        Outdoor:
-        • [Activity Name] - [Brief description including specific location/route]
-          Best timing: [specific time range]
-          Note: [relevant weather consideration]
+        🌞 ATIVIDADES À TARDE
+        Ao ar livre:
+        • [Nome da Atividade] - [Breve descrição incluindo local específico/rota]
+          Melhor horário: [faixa de horário específica]
+          Observação: [consideração relevante sobre o clima]
 
-        🏠 INDOOR ALTERNATIVES
-        • [Activity Name] - [Brief description including specific venue]
-          Ideal for: [weather condition that would trigger this alternative]
+        🏠 ALTERNATIVAS EM AMBIENTE FECHADO
+        • [Nome da Atividade] - [Breve descrição incluindo local/estabelecimento específico]
+          Ideal para: [condição climática que indicaria esta alternativa]
 
-        ⚠️ SPECIAL CONSIDERATIONS
-        • [Any relevant weather warnings, UV index, wind conditions, etc.]
+        ⚠️ CONSIDERAÇÕES ESPECIAIS
+        • [Quaisquer alertas meteorológicos relevantes, índice UV, condições de vento, etc.]
 
-        Guidelines:
-        - Suggest 2-3 time-specific outdoor activities per day
-        - Include 1-2 indoor backup options
-        - For precipitation >50%, lead with indoor activities
-        - All activities must be specific to the location
-        - Include specific venues, trails, or locations
-        - Consider activity intensity based on temperature
-        - Keep descriptions concise but informative
+        Diretrizes:
+        - Sugira 2-3 atividades ao ar livre com horários específicos por dia
+        - Inclua 1-2 opções de backup em ambientes fechados
+        - Para precipitação >50%, comece com atividades em ambientes fechados
+        - Todas as atividades devem ser específicas para o local
+        - Inclua locais, trilhas ou estabelecimentos específicos
+        - Considere a intensidade da atividade de acordo com a temperatura
+        - Mantenha as descrições concisas, porém informativas
 
-        Maintain this exact formatting for consistency, using the emoji and section headers as shown.
+        Mantenha exatamente este formato e a formatação para consistência, usando os emojis e cabeçalhos de seção conforme mostrado.
       `,
 });
 
@@ -86,9 +84,9 @@ function getWeatherCondition(code: number): string {
 
 const fetchWeather = createStep({
   id: 'fetch-weather',
-  description: 'Fetches weather forecast for a given city',
+  description: 'Busca a previsão do tempo para uma determinada cidade',
   inputSchema: z.object({
-    city: z.string().describe('The city to get the weather for'),
+    city: z.string().describe('A cidade para obter a previsão do tempo'),
   }),
   outputSchema: forecastSchema,
   execute: async ({ inputData }) => {
@@ -140,7 +138,7 @@ const fetchWeather = createStep({
 
 const planActivities = createStep({
   id: 'plan-activities',
-  description: 'Suggests activities based on weather conditions',
+  description: 'Sugere atividades com base nas condições meteorológicas',
   inputSchema: forecastSchema,
   outputSchema: z.object({
     activities: z.string(),
@@ -179,7 +177,7 @@ const planActivities = createStep({
 const weatherWorkflow = createWorkflow({
   id: 'weather-workflow',
   inputSchema: z.object({
-    city: z.string().describe('The city to get the weather for'),
+    city: z.string().describe('A cidade para obter a previsão do tempo'),
   }),
   outputSchema: z.object({
     activities: z.string(),

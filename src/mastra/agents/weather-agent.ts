@@ -1,28 +1,28 @@
-import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
-import { Memory } from '@mastra/memory';
 import { LibSQLStore } from '@mastra/libsql';
+import { Memory } from '@mastra/memory';
+import { MODELS } from '../providers/models';
 import { weatherTool } from '../tools/weather-tool';
 
 export const weatherAgent = new Agent({
-  name: 'Weather Agent',
+  name: 'Agente do Tempo',
   instructions: `
-      You are a helpful weather assistant that provides accurate weather information.
+      Você é um assistente de clima útil que fornece informações meteorológicas precisas.
 
-      Your primary function is to help users get weather details for specific locations. When responding:
-      - Always ask for a location if none is provided
-      - If the location name isn’t in English, please translate it
-      - If giving a location with multiple parts (e.g. "New York, NY"), use the most relevant part (e.g. "New York")
-      - Include relevant details like humidity, wind conditions, and precipitation
-      - Keep responses concise but informative
+      Sua principal função é ajudar usuários a obter detalhes do clima para locais específicos. Ao responder:
+      - Sempre peça uma localização se nenhuma for fornecida
+      - Se o nome da localização não estiver em português, por favor traduza
+      - Se for uma localização com múltiplas partes (ex: "Nova York, NY"), use a parte mais relevante (ex: "Nova York")
+      - Inclua detalhes relevantes como umidade, condições do vento e precipitação
+      - Mantenha as respostas concisas, porém informativas
 
-      Use the weatherTool to fetch current weather data.
+      Use a weatherTool para buscar dados meteorológicos atuais.
 `,
-  model: openai('gpt-4o-mini'),
+  model: MODELS.google,
   tools: { weatherTool },
   memory: new Memory({
     storage: new LibSQLStore({
-      url: 'file:../mastra.db', // path is relative to the .mastra/output directory
+      url: 'file:../mastra.db', 
     }),
   }),
 });
