@@ -11,7 +11,7 @@ Este projeto é um exemplo de aplicação utilizando o framework Mastra AI para 
 - [Como Usar](#como-usar)
 - [APIs Disponíveis](#apis-disponíveis)
 - [Estrutura do Projeto](#estrutura-do-projeto)
-- [Personalização](#personalização)
+- [Personalidade de IA](#personalidade-da-ia)
 - [Licença](#licença)
 
 ---
